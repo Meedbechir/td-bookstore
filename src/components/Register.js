@@ -56,7 +56,8 @@ const Register = ({ setIsAuthenticated }) => {
         userId: user.uid,
         name: name
       });
-
+      
+      
       setIsAuthenticated(true);
       navigate('/login');
 

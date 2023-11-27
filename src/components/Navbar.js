@@ -32,11 +32,9 @@ const Navbar = () => {
           <Drawer.Body>
             {/* L'historique */}
             <h2>Historique</h2>
-            <ul>
-              <li> <strong> MERN</strong></li>
-              <li> <strong>Laravel</strong> </li>
-              <li> <strong>Bootstrap</strong> </li>
-            </ul>
+            <p className='text-muted mt-4'><strong>* Pape à emprunté le livre Laravel</strong></p>
+            <p className='text-muted mt-2'><strong>* Moha à emprunté le livre Javascript</strong></p>
+            <p className='text-muted mt-2'><strong>* Test à emprunté le livre Bootstrap</strong></p>
           </Drawer.Body>
         </Drawer>
         <div className="collapse navbar-collapse" id="navbarNav">

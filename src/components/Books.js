@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FaEye, FaTrash } from 'react-icons/fa';
-import { addDoc, collection, deleteDoc, doc, getDocs } from 'firebase/firestore';
+import { addDoc, collection, deleteDoc, doc, getDocs, updateDoc } from 'firebase/firestore';
 import { db } from '../config/firebase';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -18,7 +18,6 @@ const Books = () => {
     author: '',
     description: '',
     imageUrl: '',
-    archived: false,
   });
 
   // UseEffect pour la recuperation depuis firestore
@@ -35,6 +34,7 @@ const Books = () => {
           title: bookData.title,
           author: bookData.author,
           description: bookData.description,
+          archived: bookData.archived || false, // Ajoutez la gestion des livres archivés
         });
       });
 
@@ -76,32 +76,53 @@ const Books = () => {
     setShowDetailsModal(false);
   };
 
-  // Fonction pour ajouter un livre
-  const handleAddBook = async () => {
-    // Verification des champs
-    if (!newBook.title || !newBook.author || !newBook.description || !newBook.imageUrl) {
-      toast.warning("Veuillez remplir tous les champs.");
-      return;
-    }
-  
-    try {
-     
-      const docRef = await addDoc(collection(db, 'books'), { ...newBook, stock: 5 });
-  
-      setNewBook({
-        id: docRef.id,
-        title: '',
-        author: '',
-        description: '',
-        imageUrl: ''
-      });
-  
-      setBooks([...books, { id: docRef.id, ...newBook, stock: 5 }]);
-      setShowModal(false);
-    } catch (error) {
-      console.error('Erreur: ', error);
-    }
+  // Verification du champ Img
+  const ImageUrl = (url) => {
+    const urlRegex = /^(ftp|http|https):\/\/[^ "]+$/;
+    return urlRegex.test(url);
   };
+  
+
+  // Fonction pour ajouter un livre
+
+const handleAddBook = async () => {
+  
+  // Vérification des champs
+  if (!newBook.title || !newBook.author || !newBook.description || !newBook.imageUrl) {
+    toast.warning("Veuillez remplir tous les champs.");
+    return;
+  }
+
+  if (!ImageUrl(newBook.imageUrl)) {
+    toast.warning("L'URL de l'image n'est pas valide.");
+    return;
+  }
+
+
+  try {
+    const docRef = await addDoc(collection(db, 'books'), { ...newBook });
+
+    // Stocker le stock initial dans le localStorage
+    localStorage.setItem(`stock_${docRef.id}`, '5');
+
+    setNewBook({
+      title: '',
+      author: '',
+      description: '',
+      imageUrl: ''
+    });
+
+    const bookData = {
+      id: docRef.id,
+      ...newBook
+    };
+
+    setBooks([...books, bookData]);
+    setShowModal(false);
+  } catch (error) {
+    console.error('Erreur: ', error);
+  }
+};
   
   // Supression du livre 
   const handleDeleteBook = async (bookId) => {
@@ -115,7 +136,25 @@ const Books = () => {
     setBooks(updatedBooks);
   };
 
- 
+  // Archivage
+const handleArchive = async (bookId, newArchive, book) => {
+  try {
+    await updateDoc(doc(db, 'books', bookId), { archived: newArchive });
+    setBooks((prevBooks) =>
+      prevBooks.map((prevBook) =>
+        prevBook.id === bookId ? { ...prevBook, archived: newArchive } : prevBook
+      )
+    );
+    console.log('Succees')
+    toast.success(`Le livre "${book.title}" a été ${
+      newArchive ? 'archivé' : 'désarchivé'
+    }.`);
+  } catch (error) {
+    console.error('Erreur :', error);
+    console.log('Echec')
+  }
+};
+
 
   return (
     <>
@@ -280,6 +319,7 @@ const Books = () => {
                 <td>{book.title}</td>
                 <td>{book.author}</td>
                 <td>{book.description}</td>
+                {/* Les Actions  */}
                 <td>
                   <FaEye
                     color='blue'
@@ -296,6 +336,14 @@ const Books = () => {
                     style={{ cursor: 'pointer' }}
                   />
                   </td> 
+                  <td>
+                    <button
+                      className='btn btn-warning btn-sm'
+                      onClick={() => handleArchive(book.id, !book.archived, book)}
+                    >
+                      {book.archived ? 'Désarchiver' : 'Archiver'}
+                    </button>
+                  </td>
               </tr>
             ))}
           </tbody>
