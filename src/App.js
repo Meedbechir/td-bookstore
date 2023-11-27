@@ -20,7 +20,7 @@ function App() {
         <Routes> 
           <Route path='/' element={<Register setIsAuthenticated={setIsAuthenticated} />} />
           <Route path='/login' element={<Login setIsAuthenticated={setIsAuthenticated}/>} />
-          <Route path='/users' element={<Users setIsAuthenticated={setIsAuthenticated}/>} />
+          <Route path='/users' element={isAuthenticated ? <Users /> : <Navigate to="/login" />} />
           <Route path='/dashboard' element={isAuthenticated ? <Dashboard /> : <Navigate to="/login" />} />
           <Route path='/userpage' element={isAuthenticated ? <UserPage  /> : <Navigate to="/login" />} />
         </Routes>
