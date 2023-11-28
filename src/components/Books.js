@@ -34,7 +34,7 @@ const Books = () => {
           title: bookData.title,
           author: bookData.author,
           description: bookData.description,
-          archived: bookData.archived || false, // Ajoutez la gestion des livres archivés
+          archived: bookData.archived || false, 
         });
       });
 
@@ -304,7 +304,7 @@ const handleArchive = async (bookId, newArchive, book) => {
         <table className="table">
           <thead>
             <tr>
-              <th scope="col">ID</th>
+              {/* <th scope="col">ID</th> */}
               <th scope="col">Titre</th>
               <th scope="col">Auteur</th>
               <th scope="col">Description</th>
@@ -314,39 +314,45 @@ const handleArchive = async (bookId, newArchive, book) => {
           <tbody>
             {/* Map des livres */}
             {books.map((book) => (
-              <tr key={book.id}>
-                <td>{book.id}</td>
-                <td>{book.title}</td>
-                <td>{book.author}</td>
-                <td>{book.description}</td>
-                {/* Les Actions  */}
-                <td>
-                  <FaEye
-                    color='blue'
-                    size={25}
-                    onClick={() => handleShowDetailsModal(book)}
-                    style={{ cursor: 'pointer' }}
-                  />
-                </td>
-                <td>
-                  <FaTrash
-                    color='red'
-                    size={25}
-                    onClick={() => handleDeleteBook(book.id)}
-                    style={{ cursor: 'pointer' }}
-                  />
-                  </td> 
-                  <td>
+            <tr key={book.id}>
+              <td>{book.title}</td>
+              <td>{book.author}</td>
+              <td>{book.description}</td>
+              {/* Les Actions  */}
+              <td>
+                {book.archived ? (
+                  <button
+                    className='btn btn-warning btn-sm'
+                    onClick={() => handleArchive(book.id, !book.archived, book)}
+                  >
+                    Désarchiver
+                  </button>
+                ) : (
+                  <>
+                    <FaEye
+                      color='blue'
+                      size={25}
+                      onClick={() => handleShowDetailsModal(book)}
+                      style={{ cursor: 'pointer' }}
+                    />
+                    <FaTrash
+                      color='red'
+                      size={25}
+                      onClick={() => handleDeleteBook(book.id)}
+                      style={{ cursor: 'pointer' }}
+                    />
                     <button
-                      className='btn btn-warning btn-sm'
+                      className='btn btn-warning btn-sm mt-1'
                       onClick={() => handleArchive(book.id, !book.archived, book)}
                     >
-                      {book.archived ? 'Désarchiver' : 'Archiver'}
+                      Archiver
                     </button>
-                  </td>
-              </tr>
-            ))}
-          </tbody>
+                  </>
+                )}
+    </td>
+  </tr>
+))}
+      </tbody>
         </table>
       </div>
     </div>
