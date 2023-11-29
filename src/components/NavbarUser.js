@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { auth } from '../config/firebase'; 
 
 
@@ -19,7 +18,7 @@ const Navbar = () => {
     // Navbar
     <nav className="navbar navbar-expand-lg navbar-light bg-light fixed-top">
       <div className="container-fluid">
-        <Link className="navbar-brand" to="/">Book Website</Link>
+        <p className="navbar-brand" >Book Website</p>
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav ms-auto">
             {/* Deconnexion */}

@@ -18,6 +18,7 @@ const Books = () => {
     author: '',
     description: '',
     imageUrl: '',
+    archived: false
   });
 
   // UseEffect pour la recuperation depuis firestore
@@ -109,7 +110,8 @@ const handleAddBook = async () => {
       title: '',
       author: '',
       description: '',
-      imageUrl: ''
+      imageUrl: '',
+      archived: false
     });
 
     const bookData = {
@@ -299,7 +301,7 @@ const handleArchive = async (bookId, newArchive, book) => {
       </div>
       {/* fin */}
 
-                {/* tableau qui affiche les livres */}
+        {/* tableau qui affiche les livres */}
       <div className="row mt-4">
         <table className="table">
           <thead>

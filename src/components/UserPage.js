@@ -78,7 +78,7 @@ const UserPage = () => {
   return (
     <>
       <NavbarUser />
-      <div className='container mt-5 pt-5'>
+      <div className='container userpage mt-5 pt-5'>
         <ToastContainer />
         <h2>User Page</h2>
         <div className="card-cnt">

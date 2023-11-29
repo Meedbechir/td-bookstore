@@ -23,7 +23,7 @@ const Navbar = () => {
     // Navbar
     <nav className="navbar navbar-expand-lg navbar-light bg-light fixed-top">
       <div className="container-fluid">
-        <Link className="navbar-brand" to="/">Book Website</Link>
+        <p className="navbar-brand" >Book Website</p>
         {/* Rsuite pour l'ouverture du modal de l'historique */}
         <ButtonToolbar >
           <Button onClick={() => setOpen(true)}><IoNotificationsOutline size={30} /></Button>
