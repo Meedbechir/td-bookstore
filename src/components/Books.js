@@ -18,9 +18,9 @@ const Books = () => {
     author: '',
     description: '',
     imageUrl: '',
-    archived: false
+    archived: false 
   });
-
+  
   // UseEffect pour la recuperation depuis firestore
   useEffect(() => {
     const fetchBooks = async () => {

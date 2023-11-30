@@ -25,6 +25,8 @@ const UserPage = () => {
   const handleEmprunterClick = (bookId, bookTitle) => {
     const currentStock = getStock(bookId);
 
+
+    // Verfication du stock dans le ls
     if (currentStock > 0) {
       // Réduire le stock dans le localStorage
       const newStock = currentStock - 1;
@@ -35,8 +37,10 @@ const UserPage = () => {
         [bookId]: true,
       }));
 
+      // toast 
       toast.success(`Vous avez emprunté le livre "${bookTitle}"`);
 
+      // delai pour disable le bouton livre
       const delaiDisable = 8000;
       setTimeout(() => {
         setEmprunter((prevStates) => ({
@@ -45,6 +49,7 @@ const UserPage = () => {
         }));
       }, delaiDisable);
 
+      // delai pour rendre le livre
       const delaiReturn = 9000;
       setTimeout(() => {
         toast.info(`Le livre "${bookTitle}" a été rendu`);
@@ -79,7 +84,7 @@ const UserPage = () => {
     <>
       <NavbarUser />
       <div className='container userpage mt-5 pt-5'>
-        <ToastContainer />
+    <ToastContainer />
         <h2>User Page</h2>
         <div className="card-cnt">
           {/* Filtre des livres non archivés */}
