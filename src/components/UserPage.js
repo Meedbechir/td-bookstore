@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { collection, getDocs } from 'firebase/firestore';
-import { db } from '../config/firebase';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import NavbarUser from './NavbarUser';
+import React, { useState, useEffect } from "react";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "../config/firebase";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import NavbarUser from "./NavbarUser";
 
 const UserPage = () => {
   const [books, setBooks] = useState([]);
@@ -13,7 +13,7 @@ const UserPage = () => {
   const getStock = (bookId) => {
     const stockKey = `stock_${bookId}`;
     const stock = localStorage.getItem(stockKey);
-    return stock ? parseInt(stock, 10) : 5; 
+    return stock ? parseInt(stock, 10) : 5;
   };
 
   // Fonction pour mettre à jour le stock dans le localStorage
@@ -24,7 +24,6 @@ const UserPage = () => {
 
   const handleEmprunterClick = (bookId, bookTitle) => {
     const currentStock = getStock(bookId);
-
 
     // Verfication du stock dans le ls
     if (currentStock > 0) {
@@ -37,7 +36,7 @@ const UserPage = () => {
         [bookId]: true,
       }));
 
-      // toast 
+      // toast
       toast.success(`Vous avez emprunté le livre "${bookTitle}"`);
 
       // delai pour disable le bouton livre
@@ -59,10 +58,12 @@ const UserPage = () => {
     }
   };
 
+  // Recup des livres depuis firestore
+
   useEffect(() => {
     const fetchBooks = async () => {
       try {
-        const booksCollection = collection(db, 'books');
+        const booksCollection = collection(db, "books");
         const booksSnapshot = await getDocs(booksCollection);
         const booksData = booksSnapshot.docs.map((doc) => ({
           id: doc.id,
@@ -70,10 +71,10 @@ const UserPage = () => {
         }));
 
         setBooks(booksData);
-        console.log('Récupération réussie');
+        console.log("Récupération réussie");
       } catch (error) {
-        console.error('Erreur: ', error);
-        console.log('Échec');
+        console.error("Erreur: ", error);
+        console.log("Échec");
       }
     };
 
@@ -83,17 +84,21 @@ const UserPage = () => {
   return (
     <>
       <NavbarUser />
-      <div className='container userpage mt-5 pt-5'>
-    <ToastContainer />
+      <div className="container userpage mt-5 pt-5">
+        <ToastContainer />
         <h2>User Page</h2>
         <div className="card-cnt">
           {/* Filtre des livres non archivés */}
           {books
-            .filter((book) => !book.archived) 
+            .filter((book) => !book.archived)
             .map((book) => (
               <div key={book.id} className="crd">
                 {book.imageUrl && (
-                  <img src={book.imageUrl} alt="Img" style={{ maxWidth: '100%', maxHeight: '70vh' }} />
+                  <img
+                    src={book.imageUrl}
+                    alt="Img"
+                    style={{ maxWidth: "100%", maxHeight: "70vh" }}
+                  />
                 )}
                 <h3>{book.title}</h3>
                 <p>Auteur: {book.author}</p>

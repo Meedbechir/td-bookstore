@@ -57,7 +57,7 @@ const Register = ({ setIsAuthenticated }) => {
         name: name
       });
       
-      
+      // verfi de l'authentification et la navigation
       setIsAuthenticated(true);
       navigate('/login');
 

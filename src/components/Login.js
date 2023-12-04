@@ -81,7 +81,7 @@ const Login = ({ setIsAuthenticated }) => {
         "Échec de l'envoi de l'e-mail de réinitialisation. Veuillez réessayer."
       );
       console.error(error);
-    } 
+    }
   };
 
   return (
@@ -164,14 +164,13 @@ const Login = ({ setIsAuthenticated }) => {
 
                     {/* Bouton "Mot de passe oublié" */}
                     <div className="mt-3 text-center">
-                    <button
-                      className="btn btn-danger "
-                      onClick={handleForgotPassword}
-                    >
-                      Mot de passe oublié ?
-                    </button>
+                      <button
+                        className="btn btn-danger "
+                        onClick={handleForgotPassword}
+                      >
+                        Mot de passe oublié ?
+                      </button>
                     </div>
-                   
 
                     {/* Modal Mot de passe oublié */}
                     {showForgotPasswordModal && (
