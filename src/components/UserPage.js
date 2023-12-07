@@ -35,7 +35,7 @@ const UserPage = () => {
   }, []);
 
   // Emprunter
-  const handleEmprunterClick = async (bookId, bookTitle) => {
+  const handleEmprunter = async (bookId, bookTitle) => {
     try {
       const bookRef = doc(db, "books", bookId);
       const bookDoc = await getDoc(bookRef);
@@ -60,7 +60,7 @@ const UserPage = () => {
   };
 
   // Rendre
-  const handleRendreClick = async (bookId, bookTitle) => {
+  const handleRendre = async (bookId, bookTitle) => {
     try {
       const bookRef = doc(db, "books", bookId);
       const bookDoc = await getDoc(bookRef);
@@ -103,14 +103,14 @@ const UserPage = () => {
                 <div className="">
                   <button
                     className="btn btn-info p-1 me-2"
-                    onClick={() => handleEmprunterClick(book.id, book.title)}
+                    onClick={() => handleEmprunter(book.id, book.title)}
                     disabled={livresEmpruntes.includes(book.id)}
                   >
                     Emprunter
                   </button>
                   <button
                     className="btn btn-success p-1"
-                    onClick={() => handleRendreClick(book.id, book.title)}
+                    onClick={() => handleRendre(book.id, book.title)}
                     disabled={!livresEmpruntes.includes(book.id)}
                   >
                     Rendre
