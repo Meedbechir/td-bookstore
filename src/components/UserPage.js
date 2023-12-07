@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, updateDoc } from "firebase/firestore";
 import { db } from "../config/firebase";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -7,68 +7,22 @@ import NavbarUser from "./NavbarUser";
 
 const UserPage = () => {
   const [books, setBooks] = useState([]);
-  const [emprunter, setEmprunter] = useState({});
-
-  // Fonction pour récupérer le stock d'un livre depuis le localStorage
-  const getStock = (bookId) => {
-    const stockKey = `stock_${bookId}`;
-    const stock = localStorage.getItem(stockKey);
-    return stock ? parseInt(stock, 10) : 5;
-  };
-
-  // Fonction pour mettre à jour le stock dans le localStorage
-  const updateStock = (bookId, newStock) => {
-    const stockKey = `stock_${bookId}`;
-    localStorage.setItem(stockKey, newStock.toString());
-  };
-
-  const handleEmprunterClick = (bookId, bookTitle) => {
-    const currentStock = getStock(bookId);
-
-    // Verfication du stock dans le ls
-    if (currentStock > 0) {
-      // Réduire le stock dans le localStorage
-      const newStock = currentStock - 1;
-      updateStock(bookId, newStock);
-
-      setEmprunter((prevStates) => ({
-        ...prevStates,
-        [bookId]: true,
-      }));
-
-      // toast
-      toast.success(`Vous avez emprunté le livre "${bookTitle}"`);
-
-      // delai pour disable le bouton livre
-      const delaiDisable = 8000;
-      setTimeout(() => {
-        setEmprunter((prevStates) => ({
-          ...prevStates,
-          [bookId]: false,
-        }));
-      }, delaiDisable);
-
-      // delai pour rendre le livre
-      const delaiReturn = 9000;
-      setTimeout(() => {
-        toast.info(`Le livre "${bookTitle}" a été rendu`);
-      }, delaiReturn);
-    } else {
-      toast.error(`Livre "${bookTitle}" non disponible. Stock épuisé.`);
-    }
-  };
+  const [livresEmpruntes, setLivresEmpruntes] = useState([]);
 
   // Recup des livres depuis firestore
-
   useEffect(() => {
     const fetchBooks = async () => {
       try {
         const booksCollection = collection(db, "books");
         const booksSnapshot = await getDocs(booksCollection);
-        const booksData = booksSnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
+        const booksData = booksSnapshot.docs.map((doc) => {
+          const bookData = doc.data();
+          return {
+            id: doc.id,
+            ...bookData,
+            stock: bookData.stock || 5,
+          };
+        });
 
         setBooks(booksData);
         console.log("Récupération réussie");
@@ -77,9 +31,53 @@ const UserPage = () => {
         console.log("Échec");
       }
     };
-
     fetchBooks();
   }, []);
+
+  // Emprunter
+  const handleEmprunterClick = async (bookId, bookTitle) => {
+    try {
+      const bookRef = doc(db, "books", bookId);
+      const bookDoc = await getDoc(bookRef);
+
+      if (bookDoc.exists()) {
+        const stockInitial = bookDoc.data().stock;
+
+        if (stockInitial > 0) {
+          await updateDoc(bookRef, { stock: stockInitial - 1 });
+
+          
+          setLivresEmpruntes((livres) => [...livres, bookId]);
+
+          toast.success(`Vous avez emprunté le livre "${bookTitle}"`);
+        } else {
+          toast.error(`Livre "${bookTitle}" non disponible. Stock épuisé.`);
+        }
+      }
+    } catch (error) {
+      console.error("Erreur: ", error);
+    }
+  };
+
+  // Rendre
+  const handleRendreClick = async (bookId, bookTitle) => {
+    try {
+      const bookRef = doc(db, "books", bookId);
+      const bookDoc = await getDoc(bookRef);
+
+      if (bookDoc.exists()) {
+
+        const stockInitial = bookDoc.data().stock;
+        
+        await updateDoc(bookRef, { stock: stockInitial + 1 });
+        setLivresEmpruntes((livres) => livres.filter((livre) => livre !== bookId));
+
+        toast.info(`Vous avez rendu le livre "${bookTitle}"`);
+      }
+    } catch (error) {
+      console.error("Erreur: ", error);
+    }
+  };
 
   return (
     <>
@@ -88,7 +86,6 @@ const UserPage = () => {
         <ToastContainer />
         <h2>User Page</h2>
         <div className="card-cnt">
-          {/* Filtre des livres non archivés */}
           {books
             .filter((book) => !book.archived)
             .map((book) => (
@@ -107,9 +104,16 @@ const UserPage = () => {
                   <button
                     className="btn btn-info p-1 me-2"
                     onClick={() => handleEmprunterClick(book.id, book.title)}
-                    disabled={emprunter[book.id]}
+                    disabled={livresEmpruntes.includes(book.id)}
                   >
                     Emprunter
+                  </button>
+                  <button
+                    className="btn btn-success p-1"
+                    onClick={() => handleRendreClick(book.id, book.title)}
+                    disabled={!livresEmpruntes.includes(book.id)}
+                  >
+                    Rendre
                   </button>
                 </div>
               </div>

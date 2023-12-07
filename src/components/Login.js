@@ -27,7 +27,7 @@ const Login = ({ setIsAuthenticated }) => {
     setPassword(e.target.value);
   };
 
-  // Fonction pour la connexion
+  // Fonction pour la connexion / login
   const handleLogin = async (e) => {
     e.preventDefault();
 

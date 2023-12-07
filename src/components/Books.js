@@ -109,10 +109,10 @@ const Books = () => {
     }
 
     try {
-      const docRef = await addDoc(collection(db, "books"), { ...newBook });
+      const docRef = await addDoc(collection(db, "books"), { ...newBook, stock: 5 });
 
-      // Stocker le stock initial dans le localStorage
-      localStorage.setItem(`stock_${docRef.id}`, "5");
+      // // Stocker le stock initial dans le localStorage
+      // localStorage.setItem(`stock_${docRef.id}`, "5");
 
       setNewBook({
         title: "",
